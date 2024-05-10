@@ -1,0 +1,70 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building the code using Maven...'
+                // sh 'mvn clean install'
+            }
+        }
+        stage('Unit and Integration Tests') {
+            steps {
+                echo 'Running unit and integration tests...'
+                // sh 'mvn test'
+            }
+            post {
+                always {
+                    mail body: 'Unit and Integration Tests stage completed. Check console output for details.',
+                        to: 'ashara1153shashi@gmail.com',
+                        subject: 'Jenkins Pipeline Status: Unit and Integration Tests'
+                }
+            }
+        }
+        stage('Code Analysis') {
+            steps {
+                echo 'Analyzing the code using SonarQube...'
+                // sh 'mvn sonar:sonar'
+            }
+        }
+        stage('Security Scan') {
+            steps {
+                echo 'Performing security scan...'
+                // sh 'snyk test'
+            }
+            post {
+                always {
+                    mail body: 'Security Scan stage completed. Check console output for details.',
+                        to: 'ashara1153shashi@gmail.com',
+                        subject: 'Jenkins Pipeline Status: Security Scan'
+                }
+            }
+        }
+        stage('Deploy to Staging') {
+            steps {
+                echo 'Deploying to staging server...'
+                // sh 'aws deploy ...'
+            }
+        }
+        stage('Integration Tests on Staging') {
+            steps {
+                echo 'Running integration tests on staging environment...'
+                // sh 'mvn verify'
+            }
+        }
+        stage('Deploy to Production') {
+            steps {
+                echo 'Deploying to production server...'
+                // sh 'aws deploy ...'
+            }
+        }
+    }
+
+    post {
+        always {
+            mail body: 'Pipeline completed. Check console output for details.',
+                to: 'ashara1153shashi@gmail.com',
+                subject: 'Jenkins Pipeline Status'
+        }
+    }
+}
